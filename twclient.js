@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-import { createThirdwebClient } from "thirdweb";
+const dotenv = require('dotenv');
+const { createThirdwebClient } = require("thirdweb");
 
 dotenv.config(); // Load environment variables
 
@@ -17,4 +17,4 @@ const client = createThirdwebClient(
       },
 );
 
-export default client; // Use ES Module export
+module.exports = client; // Use CommonJS export
