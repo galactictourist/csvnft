@@ -1,0 +1,50 @@
+TransactionUpdated
+Channel: transactions
+TransactionCancelled
+Channel: transactions
+ShipmentAdded
+Channel: shipments
+ShipmentCancelled
+Channel: shipments
+ShipmentDocumentAdded
+Channel: shipment-documents
+ShipmentDocumentDeleted
+Channel: shipment-documents
+ShipmentActivityUpdated
+Channel: shipment-activities
+ShipmentInvoiceCreated
+Channel: shipment-invoices
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laravel Echo Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo/dist/echo.iife.js"></script>
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script>
+        Pusher.logToConsole = true; // Enable Pusher logging
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: 'b1c5df3eb4d935887db4',
+            cluster: 'ap2',
+            encrypted: true,
+        });
+        // Listen to the TransactionUpdated event
+        window.Echo.channel('transactions')
+            .listen('TransactionUpdated', (event) => {
+                console.log('TransactionUpdated:', event.data);
+            });
+        // Listen 'ShipmentAdded', (event) => {
+                consoto the ShipmentAdded event
+        window.Echo.channel('shipments')
+            .listen(le.log('ShipmentAdded:', event.data);
+            });
+        // Add similar listeners for other events here...
+    </script>
+</head>
+<body>
+    <h1>Laravel Echo Test</h1>
+    <p>Open the browser console to see the events.</p>
+</body>
+</html>
