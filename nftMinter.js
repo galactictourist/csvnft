@@ -7,6 +7,7 @@ let uploadToIPFS;
 async function initialize() {
     const { Address, prepareContractCall, sendAndConfirmTransaction, getContract, defineChain } = await import("thirdweb");
     const { privateKeyToAccount } = await import("thirdweb/wallets");
+    
     const clientModule = await import('./twClient.js');
     const client = clientModule.default;
     const { ThirdwebSDK } = await import('@thirdweb-dev/sdk');
@@ -18,16 +19,18 @@ async function initialize() {
 
     console.log('Admin account address:', adminAccount.address);
 
-    // Define the Polygon zkEVM Cardano Testnet chain
+    
+
     const polygonZkEvmCardonaTestnet = defineChain({
         id: 2442,
-        rpc: "https://2442.rpc.thirdweb.com/${99217926c44da09698278a8ecb922c67}",
+        rpc: "https://2442.rpc.thirdweb.com",
         nativeCurrency: {
           name: "Ether",
           symbol: "ETH",
           decimals: 18,
         },
       });
+
 
     mintNFT = async (contractAddress, toAddress, tokenId, tokenURI) => {
         console.log(`Minting NFT with contractAddress: ${contractAddress}, toAddress: ${toAddress}, tokenId: ${tokenId}, tokenURI: ${tokenURI}`);
@@ -63,7 +66,7 @@ async function initialize() {
     };
 
     uploadToIPFS = async (metadata) => {
-        const sdk = new ThirdwebSDK("polygon", {
+        const sdk = new ThirdwebSDK("polygonZkEvmCardonaTestnet", {
             secretKey: process.env.REACT_APP_THREEWEB_SECRET_KEY,
         });
         try {

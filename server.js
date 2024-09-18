@@ -4,7 +4,7 @@ const processCSV = require('./processCSV');
 
 (async () => {
     const startRow = 1;
-    const numRows = 21;
+    const numRows = 3;
 
     await processCSV(startRow, numRows);
 
