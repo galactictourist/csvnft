@@ -5,8 +5,11 @@ let mintNFT;
 let uploadToIPFS;
 
 async function initialize() {
-    const { Address, prepareContractCall, sendAndConfirmTransaction, getContract, defineChain } = await import("thirdweb");
+    const { Address, prepareContractCall, sendAndConfirmTransaction, getContract } = await import("thirdweb");
     const { privateKeyToAccount } = await import("thirdweb/wallets");
+    const { defineChain } = await import("thirdweb/chains");
+    const { mintTo } = await import("thirdweb/extensions/erc721");
+    const { upload } = await import("thirdweb/storage");
     
     const clientModule = await import('./twClient.js');
     const client = clientModule.default;
@@ -16,28 +19,15 @@ async function initialize() {
         client,
         privateKey: process.env.REACT_APP_ADMIN_WALLET_KEY,
     });
-
     console.log('Admin account address:', adminAccount.address);
-
-    
-
-    const polygonZkEvmCardonaTestnet = defineChain({
-        id: 2442,
-        rpc: "https://2442.rpc.thirdweb.com",
-        nativeCurrency: {
-          name: "Ether",
-          symbol: "ETH",
-          decimals: 18,
-        },
-      });
-
+    console.log('Admin wallet key:', process.env.REACT_APP_ADMIN_WALLET_KEY);
 
     mintNFT = async (contractAddress, toAddress, tokenId, tokenURI) => {
         console.log(`Minting NFT with contractAddress: ${contractAddress}, toAddress: ${toAddress}, tokenId: ${tokenId}, tokenURI: ${tokenURI}`);
 
         const contract = getContract({
             client,
-            chain: polygonZkEvmCardonaTestnet,
+            chain: defineChain(2442),
             address: contractAddress,
         });
 
@@ -56,21 +46,26 @@ async function initialize() {
             const receipt = await sendAndConfirmTransaction({
                 transaction: tx,
                 account: adminAccount,
+               
             });
             console.log(`NFT minted successfully for contract ${contractAddress}, tokenId ${tokenId}`);
             return receipt;
         } catch (error) {
             console.error(`Error minting NFT for contract ${contractAddress}, tokenId ${tokenId}:`, error);
+            console.error('Admin account address:', adminAccount.address);
+            console.error('Admin wallet key:', process.env.REACT_APP_ADMIN_WALLET_KEY);
             throw error;
         }
     };
 
     uploadToIPFS = async (metadata) => {
-        const sdk = new ThirdwebSDK("polygonZkEvmCardonaTestnet", {
-            secretKey: process.env.REACT_APP_THREEWEB_SECRET_KEY,
-        });
         try {
-            const cid = await sdk.storage.upload(metadata);
+            const files = [new File([JSON.stringify(metadata)], "metadata.json")];
+            const uris = await upload({
+                client,
+                files,
+            });
+            const cid = uris[0].split('/').pop(); // Extract CID from the URI
             console.log("Metadata uploaded successfully. CID:", cid);
             return cid;
         } catch (error) {
